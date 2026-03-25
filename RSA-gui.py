@@ -55,7 +55,7 @@ def decode_text():
 # =============== RSA ===============
 def gen_key():
     try:
-        p, q = getPrime(128), getPrime(128)
+        p, q = getPrime(64), getPrime(64)
         n, phi = p * q, (p - 1) * (q - 1)
         e = 65537
         d = inverse(e, phi)
