@@ -55,7 +55,27 @@ def decode_text():
 # =============== RSA ===============
 def gen_key():
     try:
-        p, q = getPrime(64), getPrime(64)
+        # Lấy độ dài bit cho p
+        p_length_str = p_length_entry.get().strip()
+        if p_length_str:
+            p_length = int(p_length_str)
+            if p_length < 8:
+                messagebox.showwarning("Cảnh báo", "Độ dài bit p phải >= 8")
+                return
+        else:
+            p_length = 64
+        
+        # Lấy độ dài bit cho q
+        q_length_str = q_length_entry.get().strip()
+        if q_length_str:
+            q_length = int(q_length_str)
+            if q_length < 8:
+                messagebox.showwarning("Cảnh báo", "Độ dài bit q phải >= 8")
+                return
+        else:
+            q_length = 64
+        
+        p, q = getPrime(p_length), getPrime(q_length)
         n, phi = p * q, (p - 1) * (q - 1)
         e = 65537
         d = inverse(e, phi)
@@ -64,7 +84,7 @@ def gen_key():
         set_text(n_box, str(n))
         set_text(e_box, str(e))
         set_text(d_box, str(d))
-        messagebox.showinfo("RSA", "Đã sinh khóa RSA!")
+        messagebox.showinfo("RSA", f"Đã sinh khóa RSA!\np: {p_length} bits, q: {q_length} bits")
     except Exception as e:
         messagebox.showerror("Lỗi", f"Sinh khóa thất bại: {e}")
 
@@ -132,6 +152,19 @@ ttk.Button(f1, text="Clear All", command=clear_all).pack(side="left", padx=4)
 ttk.Separator(main, orient="horizontal").pack(fill="x", pady=8)
 
 ttk.Label(main, text="RSA Keys").pack(anchor="w")
+
+# Thêm ô nhập độ dài bit cho p và q
+bit_length_frame = ttk.Frame(main)
+bit_length_frame.pack(fill="x", pady=4)
+ttk.Label(bit_length_frame, text="Độ dài p (bits):").pack(side="left", padx=4)
+p_length_entry = ttk.Entry(bit_length_frame, width=10)
+p_length_entry.pack(side="left", padx=4)
+p_length_entry.insert(0, "64")
+ttk.Label(bit_length_frame, text="Độ dài q (bits):").pack(side="left", padx=15)
+q_length_entry = ttk.Entry(bit_length_frame, width=10)
+q_length_entry.pack(side="left", padx=4)
+q_length_entry.insert(0, "64")
+ttk.Label(bit_length_frame, text="(mặc định: 64)", foreground="gray").pack(side="left", padx=4)
 
 ttk.Label(main, text="p").pack(anchor="w")
 p_box = tk.Text(main, height=2, font=MONO); p_box.pack(fill="x", pady=2)
