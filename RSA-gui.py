@@ -6,7 +6,6 @@ from Cryptodome.Util.number import getPrime, inverse, bytes_to_long, long_to_byt
 APP_TITLE = "RSA GUI"
 MONO = ("Courier New", 10)
 
-# =============== small utils ===============
 def get_text(widget):
     return widget.get("1.0", tk.END).strip()
 
@@ -24,38 +23,8 @@ def parse_int_from(widget, field_name="giá trị"):
     except Exception:
         raise ValueError(f"{field_name} phải là số nguyên")
 
-# =============== encode/decode util ===============
-def encode_text():
-    data = get_text(input_box)
-    if not data:
-        messagebox.showwarning("Cảnh báo", "Chưa nhập dữ liệu!")
-        return
-    try:
-        n = int(data) if data.isdigit() else bytes_to_long(data.encode())
-        set_text(output_box, str(n))
-    except Exception as e:
-        messagebox.showerror("Lỗi", f"Encode thất bại: {e}")
-
-def decode_text():
-    raw = get_text(input_box)
-    if not raw:
-        messagebox.showwarning("Cảnh báo", "Chưa nhập dữ liệu!")
-        return
-    try:
-        n = int(raw)
-        b = long_to_bytes(n)
-        try:
-            text = b.decode()
-            set_text(output_box, text)
-        except Exception:
-            set_text(output_box, f"(bytes, hex)\n{b.hex()}")
-    except Exception as e:
-        messagebox.showerror("Lỗi", f"Decode thất bại: {e}")
-
-# =============== RSA ===============
 def gen_key():
     try:
-        # Lấy độ dài bit cho p
         p_length_str = p_length_entry.get().strip()
         if p_length_str:
             p_length = int(p_length_str)
@@ -65,7 +34,6 @@ def gen_key():
         else:
             p_length = 64
         
-        # Lấy độ dài bit cho q
         q_length_str = q_length_entry.get().strip()
         if q_length_str:
             q_length = int(q_length_str)
@@ -127,7 +95,6 @@ def clear_all():
     for w in (input_box, output_box, p_box, q_box, n_box, e_box, d_box):
         set_text(w, "")
 
-# =============== UI ===============
 root = tk.Tk()
 root.title(APP_TITLE)
 root.geometry("800x700")
@@ -143,17 +110,10 @@ ttk.Label(main, text="Output").pack(anchor="w")
 output_box = tk.Text(main, height=6, font=MONO)
 output_box.pack(fill="x", pady=3)
 
-f1 = ttk.Frame(main)
-f1.pack(fill="x", pady=4)
-ttk.Button(f1, text="Encode", command=encode_text).pack(side="left", padx=4)
-ttk.Button(f1, text="Decode", command=decode_text).pack(side="left", padx=4)
-ttk.Button(f1, text="Clear All", command=clear_all).pack(side="left", padx=4)
-
 ttk.Separator(main, orient="horizontal").pack(fill="x", pady=8)
 
 ttk.Label(main, text="RSA Keys").pack(anchor="w")
 
-# Thêm ô nhập độ dài bit cho p và q
 bit_length_frame = ttk.Frame(main)
 bit_length_frame.pack(fill="x", pady=4)
 ttk.Label(bit_length_frame, text="Độ dài p (bits):").pack(side="left", padx=4)
@@ -186,5 +146,6 @@ f2.pack(fill="x", pady=6)
 ttk.Button(f2, text="RSA GenKey", command=gen_key).pack(side="left", padx=4)
 ttk.Button(f2, text="Encrypt", command=rsa_encrypt).pack(side="left", padx=4)
 ttk.Button(f2, text="Decrypt", command=rsa_decrypt).pack(side="left", padx=4)
+ttk.Button(f2, text="Clear All", command=clear_all).pack(side="left", padx=4)
 
 root.mainloop()
